@@ -4,7 +4,7 @@ Created on Wed Sep 11 16:36:03 2013
 
 @author: Leo
 """
-
+""
 import pygame
 
 SCREEN_WIDTH = 480
