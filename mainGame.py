@@ -32,7 +32,7 @@ def saveHighScore(s):
 # initialize
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('飞机大战')
+pygame.display.set_caption('Aircraft war')
 
 # load sound
 bullet_sound = pygame.mixer.Sound('resources/sound/bullet.wav')
