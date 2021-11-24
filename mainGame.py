@@ -46,7 +46,8 @@ pygame.mixer.music.play(-1, 0.0)
 pygame.mixer.music.set_volume(0.25)
 
 # load background image
-background = pygame.image.load('resources/image/background.png').convert()
+background1 = pygame.image.load('resources/image/background.png').convert()
+background2 = pygame.image.load('resources/image/background.png').convert()
 game_over = pygame.image.load('resources/image/gameover.png')
 
 filename = 'resources/image/shoot.png'
@@ -95,6 +96,10 @@ clock = pygame.time.Clock()
 
 running = True
 isStop = False
+
+background1_y = 0
+background2_y = -SCREEN_HEIGHT
+background_speed = 3
 
 while running:
     # max frame = 60fps
@@ -170,7 +175,17 @@ while running:
 
     # draw background
     screen.fill(0)
-    screen.blit(background, (0, 0))
+    background1_y += background_speed
+    background2_y += background_speed
+    plus_background = 0
+    if background1_y >= SCREEN_HEIGHT:
+        plus_background = background1_y - SCREEN_HEIGHT
+        background1_y = -SCREEN_HEIGHT + plus_background
+    if background2_y >= SCREEN_HEIGHT:
+        plus_background = background2_y - SCREEN_HEIGHT
+        background2_y = -SCREEN_HEIGHT + plus_background
+    screen.blit(background1, (0, background1_y))
+    screen.blit(background2, (0, background2_y))
 
     # draw player
     if not player.is_die:
