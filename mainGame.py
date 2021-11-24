@@ -155,8 +155,9 @@ while running:
         if pygame.sprite.collide_circle(enemy, player):
             enemies_down.add(enemy)
             enemies1.remove(enemy)
-            life -= 1
-            if life <= 0:
+            if life > 0:
+                life -= 1
+            if not life:
                 player.is_die = True
                 break
         if enemy.rect.top > SCREEN_HEIGHT:
@@ -206,6 +207,13 @@ while running:
     text_rect = score_text.get_rect()
     text_rect.topleft = [10, 10]
     screen.blit(score_text, text_rect)
+
+    # draw life
+    life_font = pygame.font.Font(None, 50)
+    life_text = life_font.render(str(life), True, (255, 0, 0))
+    text_rect = life_text.get_rect()
+    text_rect.topleft = [SCREEN_WIDTH-30, 10]
+    screen.blit(life_text, text_rect)
 
     # update screen
     pygame.display.update()
