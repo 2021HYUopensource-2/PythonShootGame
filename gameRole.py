@@ -26,6 +26,13 @@ class Bullet(pygame.sprite.Sprite):
     def move(self):
         self.rect.top -= self.speed
 
+# collision
+class Collision(pygame.sprite.Sprite):
+    def __init__(self, size, pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.rect = pygame.Rect(pos, size)
+        self.rect.center = pos
+        self.rect.size = size
 # player
 class Player(pygame.sprite.Sprite):
     def __init__(self, plane_img, player_rect, init_pos):

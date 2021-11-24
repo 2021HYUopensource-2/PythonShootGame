@@ -15,7 +15,7 @@ import random
 def loadHighScore():
     try:
         f = open("score", 'r')
-        s = int(f.readline())
+        s = int(f.readline()) ^ 149801
         f.close()
     except:
         return 0
@@ -25,6 +25,7 @@ def saveHighScore(s):
     savedScore = loadHighScore()
     if savedScore < s:
         f = open("score", 'w')
+        s = s ^ 149801
         f.write(str(s))
         f.close()
     return
@@ -41,6 +42,7 @@ game_over_sound = pygame.mixer.Sound('resources/sound/game_over.wav')
 bullet_sound.set_volume(0.3)
 enemy1_down_sound.set_volume(0.3)
 game_over_sound.set_volume(0.3)
+game_over_sound_isPlaying = False
 pygame.mixer.music.load('resources/sound/game_music.wav')
 pygame.mixer.music.play(-1, 0.0)
 pygame.mixer.music.set_volume(0.25)
@@ -55,14 +57,15 @@ plane_img = pygame.image.load(filename)
 
 # player initialize
 player_rect = []
-player_rect.append(pygame.Rect(0, 99, 102, 126))        # 玩家精灵图片区域
+player_rect.append(pygame.Rect(0, 99, 102, 126))        # Player sprite area
 player_rect.append(pygame.Rect(165, 360, 102, 126))
-player_rect.append(pygame.Rect(165, 234, 102, 126))     # 玩家爆炸精灵图片区域
+player_rect.append(pygame.Rect(165, 234, 102, 126))     # Player explosion sprite area
 player_rect.append(pygame.Rect(330, 624, 102, 126))
 player_rect.append(pygame.Rect(330, 498, 102, 126))
 player_rect.append(pygame.Rect(432, 624, 102, 126))
 player_pos = [200, 600]
 player = Player(plane_img, player_rect, player_pos)
+player_collision_size = (5, 5)
 
 # Define the surface related parameters used by the bullet object
 bullet_rect = pygame.Rect(1004, 987, 9, 21)
@@ -110,8 +113,7 @@ while running:
     timeChecker = time.time()
     
     # wait while isStop is true
-    while isStop:
-        clock.tick(45)
+    if isStop:
         score_font = pygame.font.Font(None, 36)
         score_text = score_font.render("Pause", True, (128, 128, 128))
         text_rect = score_text.get_rect()
@@ -119,6 +121,7 @@ while running:
         text_rect.centery = round(SCREEN_HEIGHT / 2)
         screen.blit(score_text, text_rect)
         pygame.display.update()
+    while isStop:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -154,17 +157,17 @@ while running:
             player.bullets.remove(bullet)
 
     # enemy move, boundary check
+    player_collision = Collision(player_collision_size, (player.rect.centerx, player.rect.centery))
     for enemy in enemies1:
         enemy.move()
         # player collide check
-        if pygame.sprite.collide_circle(enemy, player):
+        if pygame.sprite.collide_circle(enemy, player_collision):
             enemies_down.add(enemy)
             enemies1.remove(enemy)
             if life > 0:
                 life -= 1
             if not life:
                 player.is_die = True
-                break
         if enemy.rect.top > SCREEN_HEIGHT:
             enemies1.remove(enemy)
 
@@ -195,7 +198,9 @@ while running:
     else:
         # player animation : destruction
         player.img_index = player_down_index // 8
-        game_over_sound.play()
+        if not game_over_sound_isPlaying:
+            game_over_sound.play()
+            game_over_sound_isPlaying = True
         screen.blit(player.image[player.img_index], player.rect)
         player_down_index += 1
         if player_down_index > 47:
