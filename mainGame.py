@@ -16,6 +16,7 @@ def loadHighScore():
     try:
         f = open("score", 'r')
         s = int(f.readline()) ^ 149801
+        s = 10 ** len(str(s)) - s
         f.close()
     except:
         return 0
@@ -26,6 +27,7 @@ def saveHighScore(s):
     if savedScore < s:
         f = open("score", 'w')
         s = s ^ 149801
+        s = 10 ** len(str(s)) - s
         f.write(str(s))
         f.close()
     return
