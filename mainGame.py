@@ -87,6 +87,13 @@ enemies1 = pygame.sprite.Group()
 # destoryed enemy list to render destruction animation
 enemies_down = pygame.sprite.Group()
 
+# Item - Heart
+heart_img = pygame.image.load('resources/image/heart.png')
+
+# Heart UI
+life = 3
+heart_UI = pygame.image.load('resources/image/heart.png')
+
 shoot_frequency = 0
 enemy_frequency = 0
 
@@ -94,7 +101,6 @@ player_down_index = 16
 
 score = 0
 playtime = 0
-life = 3
 timeChecker = time.time()
 
 clock = pygame.time.Clock()
@@ -208,20 +214,33 @@ while running:
         if player_down_index > 47:
             running = False
 
+    # draw items
+    for item in items:
+        item.move()
+        if pygame.sprite.collide_circle(item, player_collision):
+            if life < 3:
+                life += 1
+            items.remove(item)
+        if item.rect.top > SCREEN_HEIGHT:
+            items.remove(item)
+
     # enemy animation : crash
     for enemy_down in enemies_down:
         if enemy_down.down_index == 0:
             enemy1_down_sound.play()
         if enemy_down.down_index > 7:
+            percent = random.randint(1,100)
+            if percent < 4:
+                enemy_down.die(heart_img)
             enemies_down.remove(enemy_down)
             score += 1000
             continue
         screen.blit(enemy_down.down_imgs[enemy_down.down_index // 2], enemy_down.rect)
         enemy_down.down_index += 1
-
     # draw bullet, enemy
     player.bullets.draw(screen)
     enemies1.draw(screen)
+    items.draw(screen)
 
     # draw score
     score_font = pygame.font.Font(None, 36)
@@ -231,10 +250,11 @@ while running:
     screen.blit(score_text, text_rect)
 
     # draw life
+    screen.blit(heart_UI,(5,SCREEN_HEIGHT-70))
     life_font = pygame.font.Font(None, 50)
     life_text = life_font.render(str(life), True, (255, 0, 0))
     text_rect = life_text.get_rect()
-    text_rect.topleft = [SCREEN_WIDTH-30, 10]
+    text_rect.topleft = [70, SCREEN_HEIGHT-60]
     screen.blit(life_text, text_rect)
 
     # update screen
