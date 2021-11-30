@@ -15,8 +15,8 @@ import random
 def loadHighScore():
     try:
         f = open("score", 'r')
-        s = int(f.readline()) ^ 149801
-        s = 10 ** len(str(s)) - s
+        s = int(f.readline()) ^ 11498011
+        s = 100000000 - s
         f.close()
     except:
         return 0
@@ -26,8 +26,8 @@ def saveHighScore(s):
     savedScore = loadHighScore()
     if savedScore < s:
         f = open("score", 'w')
-        s = s ^ 149801
-        s = 10 ** len(str(s)) - s
+        s = 100000000 - s
+        s = s ^ 11498011
         f.write(str(s))
         f.close()
     return
