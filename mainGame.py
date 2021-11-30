@@ -15,8 +15,13 @@ import random
 def loadHighScore():
     try:
         f = open("score", 'r')
-        s = int(f.readline()) ^ 11498011
-        s = 100000000 - s
+        a1 = int(f.readline()) ^ 11498011
+        a1 = 100000000 - a1
+        a2 = int(f.readline()) ^ 12379813
+        a2 = 100000000 - a2
+        if (a1 != a2) or (a1 % 1000 != 0):
+            print("Cheat detected")
+            exit()
         f.close()
     except:
         return 0
@@ -26,9 +31,12 @@ def saveHighScore(s):
     savedScore = loadHighScore()
     if savedScore < s:
         f = open("score", 'w')
-        s = 100000000 - s
-        s = s ^ 11498011
-        f.write(str(s))
+        a = 100000000 - s
+        a = a ^ 11498011
+        f.write(str(a))
+        a = 100000000 - s
+        a = a ^ 12379813
+        f.write(str(a))
         f.close()
     return
 
