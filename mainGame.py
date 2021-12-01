@@ -14,29 +14,104 @@ import random
 
 def loadHighScore():
     try:
+        sum = 0
         f = open("score", 'r')
-        a1 = int(f.readline()) ^ 11498011
+        a1 = int(f.readline())
+        sum += a1
+        temp = a1
+        a1 = a1 ^ 11498011
         a1 = 100000000 - a1
-        a2 = int(f.readline()) ^ 12379813
-        a2 = 100000000 - a2
-        if (a1 != a2) or (a1 % 1000 != 0):
+        Parity = int(f.readline())
+        sum += Parity
+        Parity = Parity ^ 11498011
+        counter = 0
+        while temp > 0:
+            counter += temp % 2
+            temp = temp // 2
+        if Parity != counter:
             print("Cheat detected")
-            exit()
+            #exit()
+            
+        a2 = int(f.readline())
+        sum += a2
+        temp = a2
+        a2 = a2 ^ 12379813
+        a2 = 100000000 - a2
+        Parity = int(f.readline())
+        sum += Parity
+        Parity = Parity ^ 12379813
+        counter = 0
+        while temp > 0:
+            counter += temp % 2
+            temp = temp // 2
+        if Parity != counter:
+            print("Cheat detected")
+            #exit()
+            
+        savedsum = str(int(f.readline()) ^ 9438121)
+        savedsum.replace('0', '*')
+        savedsum.replace('9', '0')
+        savedsum.replace('8', '9')
+        savedsum.replace('7', '8')
+        savedsum.replace('6', '7')
+        savedsum.replace('5', '6')
+        savedsum.replace('4', '5')
+        savedsum.replace('3', '4')
+        savedsum.replace('2', '3')
+        savedsum.replace('1', '2')
+        savedsum.replace('*', '1')
+        savedsum = int(savedsum) 
+        if (a1 != a2) or (a1 % 1000 != 0) or (savedsum != sum):
+            print("Cheat detected")
+            #exit()
         f.close()
     except:
         return 0
-    return s
+    return a1
 
 def saveHighScore(s):
     savedScore = loadHighScore()
     if savedScore < s:
+        sum = 0
         f = open("score", 'w')
         a = 100000000 - s
         a = a ^ 11498011
-        f.write(str(a))
+        temp = a
+        ParityCheck = 0
+        while a > 0:
+            ParityCheck += a % 2
+            a = a // 2
+        ParityCheck = ParityCheck ^ 11498011
+        f.write(str(temp) + '\n')
+        f.write(str(ParityCheck) + '\n')
+        sum += temp
+        sum += ParityCheck
         a = 100000000 - s
         a = a ^ 12379813
-        f.write(str(a))
+        temp = a
+        ParityCheck = 0
+        while a > 0:
+            ParityCheck += a % 2
+            a = a // 2
+        ParityCheck = ParityCheck ^ 12379813
+        f.write(str(temp) + '\n')
+        f.write(str(ParityCheck) + '\n')
+        sum += temp
+        sum += ParityCheck
+        sum = sum ^ 9438121
+        sum = str(sum)
+        sum.replace("0", "*")
+        sum.replace("1", "0")
+        sum.replace("2", "1")
+        sum.replace("3", "2")
+        sum.replace("4", "3")
+        sum.replace("5", "4")
+        sum.replace("6", "5")
+        sum.replace("7", "6")
+        sum.replace("8", "7")
+        sum.replace("9", "8")
+        sum.replace("*", "9")
+        f.write(sum)
         f.close()
     return
 
