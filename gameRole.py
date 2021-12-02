@@ -14,18 +14,25 @@ TYPE_SMALL = 1
 TYPE_MIDDLE = 2
 TYPE_BIG = 3
 items = pygame.sprite.Group()
-
 # bullet
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, bullet_img, init_pos):
+    def __init__(self, bullet_img, init_pos,level):
         pygame.sprite.Sprite.__init__(self)
         self.image = bullet_img
         self.rect = self.image.get_rect()
         self.rect.midbottom = init_pos
         self.speed = 10
+        self.level = level
 
     def move(self):
-        self.rect.top -= self.speed
+        if self.level == 1:
+            self.rect.top -= self.speed
+        elif self.level == 2:
+            self.rect.top -= self.speed
+            self.rect.left -= self.speed/2
+        elif self.level == 3:
+            self.rect.top -= self.speed
+            self.rect.left += self.speed/2
 
 # collision
 class Collision(pygame.sprite.Sprite):
@@ -47,10 +54,19 @@ class Player(pygame.sprite.Sprite):
         self.bullets = pygame.sprite.Group()            # initialize player bullet group
         self.img_index = 0                              # initialize player sprite index
         self.is_die = False                             # initialize player ishit
+        self.life = 3
+        self.bulletlevel = 1
 
     def shoot(self, bullet_img):
-        bullet = Bullet(bullet_img, self.rect.midtop)
-        self.bullets.add(bullet)
+        if self.bulletlevel > 0:
+            bullet = Bullet(bullet_img, self.rect.midtop, 1)
+            self.bullets.add(bullet)
+        if self.bulletlevel > 1:
+            bullet = Bullet(bullet_img, self.rect.midtop, 2)
+            self.bullets.add(bullet)
+        if self.bulletlevel > 2:
+            bullet = Bullet(bullet_img, self.rect.midtop, 3)
+            self.bullets.add(bullet)
 
     def moveUp(self):
         if self.rect.top <= 0:
@@ -86,13 +102,18 @@ class Enemy(pygame.sprite.Sprite):
         self.down_imgs = enemy_down_imgs
         self.speed = 2
         self.down_index = 0
+        self.die_reason = 0 #0 = player, 1=bullet
 
     def move(self):
         self.rect.top += self.speed
     
-    def die(self, heart_img):
+    def die_heart(self, heart_img):
         heart = Heart(heart_img,self.rect.topleft)
         items.add(heart)
+
+    def die_bullet(self, bulletplus_img):
+        bulletplus = BulletPlus(bulletplus_img,self.rect.topleft)
+        items.add(bulletplus)
 
 # item - heart
 class Heart(pygame.sprite.Sprite):
@@ -106,3 +127,22 @@ class Heart(pygame.sprite.Sprite):
     def move(self):
         self.rect.top += self.speed
 
+    def use(self,player):
+        if player.life < 3:
+            player.life += 1
+
+# item - bulletplus
+class BulletPlus(pygame.sprite.Sprite):
+    def __init__(self,bulletplus_img, init_pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = bulletplus_img
+        self.rect = self.image.get_rect()
+        self.rect.topleft = init_pos
+        self.speed = 1.1
+
+    def move(self):
+        self.rect.top += self.speed
+
+    def use(self,player):
+        if player.bulletlevel < 3:
+            player.bulletlevel += 1

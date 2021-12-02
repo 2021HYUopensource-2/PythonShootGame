@@ -173,8 +173,10 @@ enemies_down = pygame.sprite.Group()
 # Item - Heart
 heart_img = pygame.image.load('resources/image/heart.png')
 
+# Item - BulletPlus
+bulletplus_img = pygame.image.load('resources/image/bullet.png')
+
 # Heart UI
-life = 3
 heart_UI = pygame.image.load('resources/image/heart.png')
 
 shoot_frequency = 0
@@ -255,9 +257,11 @@ while running:
         if pygame.sprite.collide_circle(enemy, player_collision):
             enemies_down.add(enemy)
             enemies1.remove(enemy)
-            if life > 0:
-                life -= 1
-            if not life:
+            if player.bulletlevel > 1:
+                player.bulletlevel = 1
+            if player.life > 0:
+                player.life -= 1
+            if not player.life:
                 player.is_die = True
         if enemy.rect.top > SCREEN_HEIGHT:
             enemies1.remove(enemy)
@@ -265,6 +269,7 @@ while running:
     # render destruction animation
     enemies1_down = pygame.sprite.groupcollide(enemies1, player.bullets, 1, 1)
     for enemy_down in enemies1_down:
+        enemy_down.die_reason = 1
         enemies_down.add(enemy_down)
 
     # draw background
@@ -301,8 +306,7 @@ while running:
     for item in items:
         item.move()
         if pygame.sprite.collide_circle(item, player_collision):
-            if life < 3:
-                life += 1
+            item.use(player)
             items.remove(item)
         if item.rect.top > SCREEN_HEIGHT:
             items.remove(item)
@@ -312,9 +316,12 @@ while running:
         if enemy_down.down_index == 0:
             enemy1_down_sound.play()
         if enemy_down.down_index > 7:
-            percent = random.randint(1,100)
-            if percent < 4:
-                enemy_down.die(heart_img)
+            if enemy_down.die_reason:
+                percent = random.randint(1,100)
+                if percent < 4:
+                    enemy_down.die_heart(heart_img)
+                elif percent < 8:
+                    enemy_down.die_bullet(bulletplus_img)
             enemies_down.remove(enemy_down)
             score += 1000
             continue
@@ -335,7 +342,7 @@ while running:
     # draw life
     screen.blit(heart_UI,(5,SCREEN_HEIGHT-70))
     life_font = pygame.font.Font(None, 50)
-    life_text = life_font.render(str(life), True, (255, 0, 0))
+    life_text = life_font.render(str(player.life), True, (255, 0, 0))
     text_rect = life_text.get_rect()
     text_rect.topleft = [70, SCREEN_HEIGHT-60]
     screen.blit(life_text, text_rect)
