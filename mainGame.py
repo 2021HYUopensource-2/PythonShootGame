@@ -472,10 +472,6 @@ background1_y = 0
 background2_y = -SCREEN_HEIGHT
 background_speed = 3
 
-# load button image
-startImg = pygame.image.load('resources/image/starticon.png')
-quitImg = pygame.image.load('resources/image/quiticon.png')
-
 main_menu()
 
 while 1:
