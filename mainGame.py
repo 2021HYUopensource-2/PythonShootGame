@@ -146,7 +146,7 @@ def main_menu():
         if key_pressed[K_ESCAPE]:
             menu = False
             pygame.quit()
-            sys.exit()    
+            exit()    
         if key_pressed[K_s]:
             menu = False
             play_game()  
@@ -435,7 +435,7 @@ def game_end(score, screen, game_over):
         if key_pressed[K_ESCAPE]:
             menu = False
             pygame.quit()
-            sys.exit()    
+            exit()    
         if key_pressed[K_s]:
             menu = False
             play_game()
