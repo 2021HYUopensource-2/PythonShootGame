@@ -56,6 +56,7 @@ class Player(pygame.sprite.Sprite):
         self.is_die = False                             # initialize player ishit
         self.life = 3
         self.bulletlevel = 1
+        self.bomb = 0
 
     def shoot(self, bullet_img):
         if self.bulletlevel > 0:
@@ -92,6 +93,11 @@ class Player(pygame.sprite.Sprite):
         else:
             self.rect.left += self.speed
 
+    def bomb_use(self,enemy):
+        self.bomb -= 1
+        for mob in enemy:
+            enemy.remove(mob)
+
 # enemy
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, enemy_img, enemy_down_imgs, init_pos):
@@ -100,7 +106,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = init_pos
         self.down_imgs = enemy_down_imgs
-        self.speed = 2
+        self.speed = 3
         self.down_index = 0
         self.die_reason = 0 #0 = player, 1=bullet
 
@@ -114,6 +120,10 @@ class Enemy(pygame.sprite.Sprite):
     def die_bullet(self, bulletplus_img):
         bulletplus = BulletPlus(bulletplus_img,self.rect.topleft)
         items.add(bulletplus)
+
+    def die_bomb(self, bomb_img):
+        bomb = Bomb(bomb_img, self.rect.topleft)
+        items.add(bomb)
 
 # item - heart
 class Heart(pygame.sprite.Sprite):
@@ -146,3 +156,20 @@ class BulletPlus(pygame.sprite.Sprite):
     def use(self,player):
         if player.bulletlevel < 3:
             player.bulletlevel += 1
+
+# item - bomb
+class Bomb(pygame.sprite.Sprite):
+    def __init__(self,bomb_img, init_pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = bomb_img
+        self.rect = self.image.get_rect()
+        self.rect.topleft = init_pos
+        self.speed = 1.1
+    
+    def move(self):
+        self.rect.top += self.speed
+    
+    def use(self,player):
+        if player.bomb < 3:
+            player.bomb += 1
+

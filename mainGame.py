@@ -189,8 +189,14 @@ def play_game():
     # Item - BulletPlus
     bulletplus_img = pygame.image.load('resources/image/bullet.png')
 
+    # item - Bomb
+    bomb_img = plane_img.subsurface(pygame.Rect(810, 691, 63, 57))
+
     # Heart UI
     heart_UI = pygame.image.load('resources/image/heart.png')
+
+    # bomb_use_time
+    bomb_time = 0
 
     shoot_frequency = 0
     enemy_frequency = 0
@@ -198,6 +204,7 @@ def play_game():
     player_down_index = 16
 
     score = 0
+    spawnRateLevel = 1
     playtime = 0
     timeChecker = time.time()
 
@@ -217,7 +224,7 @@ def play_game():
         # add playtime
         playtime += time.time() - timeChecker
         timeChecker = time.time()
-        
+
         # wait while isStop is true
         if isStop:
             score_font = pygame.font.Font(None, 36)
@@ -248,13 +255,18 @@ def play_game():
                 shoot_frequency = 0
 
         # spawn enemy
-        if enemy_frequency % 50 == 0:
+        spawn_check = 50 - int(1.115 ** spawnRateLevel)
+        if spawn_check < 2:
+            spawn_check = 2
+        if enemy_frequency % spawn_check == 0:
             enemy1_pos = [random.randint(0, SCREEN_WIDTH - enemy1_rect.width), 0]
             enemy1 = Enemy(enemy1_img, enemy1_down_imgs, enemy1_pos)
             enemies1.add(enemy1)
         enemy_frequency += 1
-        if enemy_frequency >= 100:
+        if enemy_frequency >= 500:
+            spawnRateLevel += 1
             enemy_frequency = 0
+
 
         # bullet move, boundary check
         for bullet in player.bullets:
@@ -270,6 +282,8 @@ def play_game():
             if pygame.sprite.collide_circle(enemy, player_collision):
                 enemies_down.add(enemy)
                 enemies1.remove(enemy)
+                if player.bomb > 0:
+                    player.bomb_use(enemies1)
                 if player.bulletlevel > 1:
                     player.bulletlevel = 1
                 if player.life > 0:
@@ -330,11 +344,13 @@ def play_game():
                 enemy1_down_sound.play()
             if enemy_down.down_index > 7:
                 if enemy_down.die_reason:
-                    percent = random.randint(1,100)
-                    if percent < 4:
+                    percent = random.randint(1,10001)
+                    if percent <= 50:
                         enemy_down.die_heart(heart_img)
-                    elif percent < 8:
+                    elif percent <= 150:
                         enemy_down.die_bullet(bulletplus_img)
+                    elif percent < 175:
+                        enemy_down.die_bomb(bomb_img)
                 enemies_down.remove(enemy_down)
                 score += 1000
                 continue
@@ -351,6 +367,16 @@ def play_game():
         text_rect = score_text.get_rect()
         text_rect.topleft = [10, 10]
         screen.blit(score_text, text_rect)
+
+
+		# draw bomb
+        if player.bomb > 0:
+            screen.blit(bomb_img,(SCREEN_WIDTH-70, SCREEN_HEIGHT -70))
+            bomb_font = pygame.font.Font(None, 50)
+            bomb_text = bomb_font.render(str(player.bomb), True, (120, 120, 120))
+            text_rect = bomb_text.get_rect()
+            text_rect.topleft = [SCREEN_WIDTH - 100, SCREEN_HEIGHT-60]
+            screen.blit(bomb_text, text_rect)
 
         # draw life
         screen.blit(heart_UI,(5,SCREEN_HEIGHT-70))
@@ -371,7 +397,8 @@ def play_game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     isStop = True
-                
+
+        bomb_time += 1
         # keyboard input event
         key_pressed = pygame.key.get_pressed()
         # If the player is hit, it has no effect
@@ -390,6 +417,9 @@ def play_game():
                 player.moveLeft()
             if key_pressed[K_d] or key_pressed[K_RIGHT]:
                 player.moveRight()
+            if player.bomb > 0 and bomb_time >= 30 and key_pressed[K_e]:
+                player.bomb_use(enemies1)
+                bomb_time = 0
     game_end(score, screen, game_over)
 
 
