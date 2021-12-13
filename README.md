@@ -24,6 +24,7 @@ $ python mainGame.py
 W / A / S / D or Arrow keys : move  
 Space : pause  
 Shift : slow mode  
+E : Bomb (when you have)
 
 # License
 GPL
