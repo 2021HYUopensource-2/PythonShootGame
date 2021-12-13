@@ -272,7 +272,7 @@ def play_game():
 
 
         # spawn enemy
-        spawn_check = 50 - int(1.115 ** spawnRateLevel)
+        spawn_check = 50 - int(1.15 ** spawnRateLevel)
         if spawn_check < 2:
             spawn_check = 2
         if enemy_frequency % spawn_check == 0:
@@ -280,7 +280,7 @@ def play_game():
             enemy1 = Enemy(enemy1_img, enemy1_down_imgs, enemy1_pos)
             enemies1.add(enemy1)
         enemy_frequency += 1
-        if enemy_frequency >= 500:
+        if enemy_frequency >= 300:
             spawnRateLevel += 1
             enemy_frequency = 0
 
@@ -369,11 +369,11 @@ def play_game():
             if enemy_down.down_index > 7:
                 if enemy_down.die_reason:
                     percent = random.randint(1,10001)
-                    if percent <= 50:
+                    if percent <= 100:
                         enemy_down.die_heart(heart_img)
-                    elif percent <= 150:
+                    elif percent <= 200:
                         enemy_down.die_bullet(bulletplus_img)
-                    elif percent < 175:
+                    elif percent <= 350:
                         enemy_down.die_bomb(bomb_img)
                 enemies_down.remove(enemy_down)
                 score += 1000
