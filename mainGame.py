@@ -148,8 +148,12 @@ def main_menu():
             pygame.quit()
             exit()    
         if key_pressed[K_s]:
+
             menu = False
-            play_game()  
+            play_game()
+
+
+
 
 def play_game():
     game_over_sound_isPlaying = False
@@ -164,8 +168,9 @@ def play_game():
     player_pos = [200, 600]
     player = Player(plane_img, player_rect, player_pos)
     player_collision_size = (5, 5)
-    # ship
-    ship_rect=[]
+
+
+    ship_rect = []
 
     ship_rect.append(pygame.Rect(5, 500, 150, 300))
     ship_rect.append(pygame.Rect(5, 223, 150, 300))
@@ -173,10 +178,8 @@ def play_game():
     ship_rect.append(pygame.Rect(680, 745, 150, 270))
     ship_rect.append(pygame.Rect(5, 745, 150, 270))
 
-    ship_pos = [175,600]
-
-    ship= Ship(plane_img,ship_rect,ship_pos)
-
+    ship_pos = [175, 600]
+    ship = Ship(plane_img, ship_rect, ship_pos)
 
     # Define the surface related parameters used by the bullet object
     bullet_rect = pygame.Rect(1004, 987, 9, 21)
@@ -267,6 +270,7 @@ def play_game():
             if shoot_frequency >= 15:
                 shoot_frequency = 0
 
+
         # spawn enemy
         spawn_check = 50 - int(1.115 ** spawnRateLevel)
         if spawn_check < 2:
@@ -331,6 +335,11 @@ def play_game():
             screen.blit(player.image[player.img_index], player.rect)
             # player animation : normal
             player.img_index = shoot_frequency // 8
+        #draw ship
+            screen.blit(ship.image[ship.img_index], ship.rect)
+            ship.move()
+
+
 
 
         else:
@@ -383,10 +392,6 @@ def play_game():
         text_rect.topleft = [10, 10]
         screen.blit(score_text, text_rect)
 
-        #draw ship
-
-        screen.blit(ship.image[ship.img_index], ship.rect)
-        ship.move()
 		# draw bomb
         if player.bomb > 0:
             screen.blit(bomb_img,(SCREEN_WIDTH-70, SCREEN_HEIGHT -70))

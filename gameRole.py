@@ -53,9 +53,24 @@ class Ship(pygame.sprite.Sprite):
         self.img_index = 0
         self.sx=100
         self.sy=100
-        self.speed = 2
+        self.speed = 1.5
+        self.explosion_sound = pygame.mixer.Sound('resources/sound/boom10.wav')
+        self.explosion_sound.set_volume(0.3)
     def move(self):
         self.rect.top += self.speed
+        if self.rect.top == 630:
+            self.img_index +=1
+            self.explosion_sound.play()
+        if self.rect.top == 660:
+            self.img_index +=1
+            self.explosion_sound.play()
+        if self.rect.top == 690:
+            self.img_index +=1
+            self.explosion_sound.play()
+        if self.rect.top == 720:
+            self.img_index +=1
+            self.explosion_sound.play()
+
 # player
 class Player(pygame.sprite.Sprite):
     def __init__(self, plane_img, player_rect, init_pos):
