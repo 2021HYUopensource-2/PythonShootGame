@@ -41,6 +41,21 @@ class Collision(pygame.sprite.Sprite):
         self.rect = pygame.Rect(pos, size)
         self.rect.center = pos
         self.rect.size = size
+#ship
+class Ship(pygame.sprite.Sprite):
+    def __init__(self,plane_img,ship_rect,init_pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = []
+        for i in range(len(ship_rect)):
+            self.image.append(plane_img.subsurface(ship_rect[i]).convert_alpha())
+        self.rect = ship_rect[0]
+        self.rect.topleft = init_pos
+        self.img_index = 0
+        self.sx=100
+        self.sy=100
+        self.speed = 2
+    def move(self):
+        self.rect.top += self.speed
 # player
 class Player(pygame.sprite.Sprite):
     def __init__(self, plane_img, player_rect, init_pos):
